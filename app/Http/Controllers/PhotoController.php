@@ -8,7 +8,19 @@ use Illuminate\Support\Facades\Storage;
 
 class PhotoController extends Controller
 {
-    // ✅ Hanya bisa digunakan oleh admin (middleware auth:sanctum nanti di routes)
+    public function index()
+    {
+        $photos = Photo::with('portfolio')->paginate(10);
+
+        $photos->transform(function ($photo) {
+            $photo->url = asset('storage/' . $photo->photo_path);
+            return $photo;
+        });
+
+        return response()->json($photos);
+    }
+
+    // ✅ Hanya bisa digunakan oleh admin (pastikan middleware auth:sanctum di route)
     public function store(Request $request)
     {
         $request->validate([
@@ -23,7 +35,12 @@ class PhotoController extends Controller
             'photo_path' => $path,
         ]);
 
-        return response()->json($photo, 201);
+        return response()->json([
+            'id' => $photo->id,
+            'portfolio_id' => $photo->portfolio_id,
+            'photo_path' => $photo->photo_path,
+            'url' => asset('storage/' . $photo->photo_path), // ✅ kirim URL lengkap
+        ], 201);
     }
 
     public function destroy($id)
@@ -34,7 +51,7 @@ class PhotoController extends Controller
         if (Storage::disk('public')->exists($photo->photo_path)) {
             Storage::disk('public')->delete($photo->photo_path);
         }
-        
+
         $photo->delete();
 
         return response()->json(['message' => 'Photo deleted']);

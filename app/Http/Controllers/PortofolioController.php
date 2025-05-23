@@ -12,7 +12,7 @@ class PortofolioController extends Controller
     // PUBLIC - Guest bisa akses
     public function index()
     {
-        return Portfolio::with('photos')->get();
+        return Portfolio::with('photos')->paginate(10);
     }
 
     // PUBLIC - Guest bisa akses

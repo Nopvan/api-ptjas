@@ -25,7 +25,7 @@ class PhotoController extends Controller
     {
         $request->validate([
             'portfolio_id' => 'required|exists:portfolios,id',
-            'image' => 'required|image|mimes:jpeg,png,jpg|max:2048',
+            'image' => 'required|image|mimes:jpeg,png,jpg',
         ]);
 
         $path = $request->file('image')->store('portfolios', 'public');

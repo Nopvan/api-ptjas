@@ -8,6 +8,11 @@ use App\Http\Controllers\AuthController;
 // Route publik: siapa aja bisa lihat portofolio
 Route::apiResource('portofolios', PortofolioController::class)->only(['index', 'show']);
 
+
+Route::get('/test-users', function () {
+    return response()->json(['count' => \App\Models\User::count()]);
+});
+
 Route::get('/photos', [PhotoController::class, 'index'])->middleware(\App\Http\Middleware\CorsMiddleware::class);
 
 Route::post('/login', [AuthController::class, 'login'])->middleware(\App\Http\Middleware\CorsMiddleware::class);

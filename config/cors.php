@@ -19,7 +19,7 @@ return [
 
     'allowed_methods' => ['*'],
 
-    'allowed_origins' => ['http://pt-jas.vercel.app'],
+    'allowed_origins' => ['https://pt-jas.vercel.app'],
 
     'allowed_origins_patterns' => [],
 

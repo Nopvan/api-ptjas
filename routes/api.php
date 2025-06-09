@@ -4,6 +4,7 @@ use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\PortofolioController;
 use App\Http\Controllers\PhotoController;
 use App\Http\Controllers\AuthController;
+use App\Http\Controllers\StatController;
 
 // Route publik: siapa aja bisa lihat portofolio
 Route::apiResource('portofolios', PortofolioController::class)->only(['index', 'show']);
@@ -16,6 +17,8 @@ Route::get('/test-users', function () {
 Route::get('/photos', [PhotoController::class, 'index'])->middleware(\App\Http\Middleware\CorsMiddleware::class);
 
 Route::post('/login', [AuthController::class, 'login'])->middleware(\App\Http\Middleware\CorsMiddleware::class);
+
+Route::get('/stats', [StatController::class, 'index']);
 
 Route::middleware('auth:sanctum')->post('/logout', [AuthController::class, 'logout']);
 

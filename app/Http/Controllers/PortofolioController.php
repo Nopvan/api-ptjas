@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\Portfolio;
+use App\Models\PortfolioVisitor;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\Log;
@@ -12,7 +13,25 @@ class PortofolioController extends Controller
     // PUBLIC - Guest bisa akses
     public function index()
     {
-        return Portfolio::with('photos')->paginate(10);
+        $portfolios = Portfolio::with('photos')->paginate(10);
+
+        $ip = request()->ip();
+
+        foreach ($portfolios as $portfolio) {
+            $alreadyVisited = PortfolioVisitor::where('portfolio_id', $portfolio->id)
+                ->where('visitor_ip', $ip)
+                ->exists();
+
+            if (!$alreadyVisited) {
+                PortfolioVisitor::create([
+                    'portfolio_id' => $portfolio->id,
+                    'visitor_ip' => $ip,
+                ]);
+                $portfolio->increment('views');
+            }
+        }
+
+        return $portfolios;
     }
 
     // PUBLIC - Guest bisa akses

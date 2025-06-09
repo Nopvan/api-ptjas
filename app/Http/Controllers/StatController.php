@@ -11,21 +11,28 @@ class StatController extends Controller
 {
     public function index()
     {
-        $portfolioCount = Portfolio::count(); // total semua portfolio
-        $photoCount = Photo::count(); // total semua foto
+        try {
+            $portfolios = Portfolio::with('photos')->paginate(10);
+            $ip = request()->ip();
 
-        // Ambil tanggal 30 hari lalu dari sekarang
-        $startDate = Carbon::now()->subDays(30);
+            foreach ($portfolios as $portfolio) {
+                $alreadyVisited = PortfolioVisitor::where('portfolio_id', $portfolio->id)
+                    ->where('visitor_ip', $ip)
+                    ->exists();
 
-        // Hitung pengunjung unik dalam 30 hari terakhir
-        $visitorCount = PortfolioVisitor::where('created_at', '>=', $startDate)
-            ->distinct('visitor_ip')
-            ->count('visitor_ip');
+                if (!$alreadyVisited) {
+                    PortfolioVisitor::create([
+                        'portfolio_id' => $portfolio->id,
+                        'visitor_ip' => $ip,
+                    ]);
+                    // GAK PERLU INI:
+                    // $portfolio->increment('views');
+                }
+            }
 
-        return response()->json([
-            'portfolio_count' => $portfolioCount,
-            'photo_count' => $photoCount,
-            'visitor_count' => $visitorCount
-        ]);
+            return response()->json($portfolios);
+        } catch (\Exception $e) {
+            dd($e->getMessage()); // buat debug kalau masih error
+        }
     }
 }

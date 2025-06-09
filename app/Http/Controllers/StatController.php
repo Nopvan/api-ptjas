@@ -11,8 +11,10 @@ class StatController extends Controller
 {
     public function index()
     {
+        dd('TEST');
         try {
             $portfolios = Portfolio::with('photos')->paginate(10);
+            dd($portfolios);
             $ip = request()->ip();
 
             foreach ($portfolios as $portfolio) {
@@ -32,7 +34,7 @@ class StatController extends Controller
 
             return response()->json($portfolios);
         } catch (\Exception $e) {
-            dd($e->getMessage()); // buat debug kalau masih error
+            dd($e->getMessage()); 
         }
     }
 }

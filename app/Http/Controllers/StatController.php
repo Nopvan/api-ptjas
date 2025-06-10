@@ -11,7 +11,6 @@ class StatController extends Controller
 {
     public function index()
     {
-        dd('TEST');
         try {
             $portfolios = Portfolio::with('photos')->paginate(10);
             dd($portfolios);
@@ -27,8 +26,6 @@ class StatController extends Controller
                         'portfolio_id' => $portfolio->id,
                         'visitor_ip' => $ip,
                     ]);
-                    // GAK PERLU INI:
-                    // $portfolio->increment('views');
                 }
             }
 

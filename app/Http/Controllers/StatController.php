@@ -11,6 +11,7 @@ class StatController extends Controller
 {
     public function index()
     {
+        dd('TEST');
         try {
             $portfolios = Portfolio::with('photos')->paginate(10);
             dd($portfolios);

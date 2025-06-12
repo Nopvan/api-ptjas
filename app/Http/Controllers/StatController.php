@@ -9,30 +9,23 @@ use Carbon\Carbon;
 
 class StatController extends Controller
 {
-    public function index()
+     public function index()
     {
-        dd('TEST');
         try {
-            $portfolios = Portfolio::with('photos')->paginate(10);
-            dd($portfolios);
-            $ip = request()->ip();
+            $totalPortfolios = Portfolio::count();
+            $totalPhotos = Photo::count();
+            $totalVisitors = PortfolioVisitor::distinct('visitor_ip')->count('visitor_ip');
 
-            foreach ($portfolios as $portfolio) {
-                $alreadyVisited = PortfolioVisitor::where('portfolio_id', $portfolio->id)
-                    ->where('visitor_ip', $ip)
-                    ->exists();
-
-                if (!$alreadyVisited) {
-                    PortfolioVisitor::create([
-                        'portfolio_id' => $portfolio->id,
-                        'visitor_ip' => $ip,
-                    ]);
-                }
-            }
-
-            return response()->json($portfolios);
+            return response()->json([
+                'portfolio_count' => $totalPortfolios,
+                'photo_count' => $totalPhotos,
+                'visitor_count' => $totalVisitors,
+            ]);
         } catch (\Exception $e) {
-            dd($e->getMessage()); 
+            return response()->json([
+                'error' => 'Something went wrong',
+                'message' => $e->getMessage(),
+            ], 500);
         }
     }
 }

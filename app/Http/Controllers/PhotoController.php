@@ -26,6 +26,7 @@ class PhotoController extends Controller
         $request->validate([
             'portfolio_id' => 'required|exists:portfolios,id',
             'image' => 'required|image|mimes:jpeg,png,jpg',
+            'caption' => 'required|string|max:255',
         ]);
 
         $path = $request->file('image')->store('portfolios', 'public');
@@ -33,12 +34,14 @@ class PhotoController extends Controller
         $photo = Photo::create([
             'portfolio_id' => $request->portfolio_id,
             'photo_path' => $path,
+            'caption' => $request->caption,
         ]);
 
         return response()->json([
             'id' => $photo->id,
             'portfolio_id' => $photo->portfolio_id,
             'photo_path' => $photo->photo_path,
+            'caption' => $photo->caption,
             'url' => asset('storage/' . $photo->photo_path), // ✅ kirim URL lengkap
         ], 201);
     }

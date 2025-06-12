@@ -15,6 +15,7 @@ return new class extends Migration
             $table->id();
             $table->foreignId('portfolio_id')->constrained()->onDelete('cascade');
             $table->string('photo_path');
+            $table->string('caption');
             $table->timestamps();
         });
     }

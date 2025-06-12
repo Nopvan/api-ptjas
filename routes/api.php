@@ -16,6 +16,10 @@ Route::get('/test-users', function () {
 
 Route::get('/photos', [PhotoController::class, 'index'])->middleware(\App\Http\Middleware\CorsMiddleware::class);
 
+Route::get('/portofoliosindex', [PortofolioController::class, 'getPortfolioforIndex']);
+
+Route::get('/portofoliosindex/{id}', [PortofolioController::class, 'showPortfolioforIndex']);
+
 Route::post('/login', [AuthController::class, 'login'])->middleware(\App\Http\Middleware\CorsMiddleware::class);
 
 Route::get('/stats', [StatController::class, 'index']);

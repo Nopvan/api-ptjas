@@ -21,12 +21,14 @@ class PortofolioSeeder extends Seeder
         // contoh photo portfolio 1
         Photo::create([
             'portfolio_id' => $portfolio->id,
-            'photo_path' => 'portfolios/sample1.jpg', // pastikan filenya ada di storage/app/public/portfolios
+            'photo_path' => 'portfolios/sample1.jpg',
+            'caption' => 'Landing page design',
         ]);
 
         Photo::create([
             'portfolio_id' => $portfolio->id,
             'photo_path' => 'portfolios/sample2.png',
+            'caption' => 'Homepage design',
         ]);
 
         // contoh portfolio 2
@@ -40,6 +42,7 @@ class PortofolioSeeder extends Seeder
         Photo::create([
             'portfolio_id' => $portfolio2->id,
             'photo_path' => 'portfolios/sample3.png',
+            'caption' => 'Login screen design',
         ]);
     }
 }

@@ -9,7 +9,7 @@ class Photo extends Model
 {
     use HasFactory;
 
-    protected $fillable = ['portfolio_id', 'photo_path'];
+    protected $fillable = ['portfolio_id', 'photo_path', 'caption'];
 
     public function portfolio()
     {

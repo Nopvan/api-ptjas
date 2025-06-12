@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\Portfolio;
 use App\Models\PortfolioVisitor;
+use App\Models\Photo;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\Log;
@@ -102,4 +103,58 @@ class PortofolioController extends Controller
 
         return response()->json(['message' => 'Portfolio deleted']);
     }
+
+    public function getPortfolioforIndex()
+    {
+         try {
+            $photos = Photo::with('portfolio')->get();
+            $formatted = $photos->map(function ($photo) {
+                return [
+                    'id' => $photo->id,
+                    'photo_path' => $photo->photo_path,
+                    'caption' => $photo->caption,
+                    'title' => $photo->portfolio->title ?? null,
+                    'description' => $photo->portfolio->description ?? null,
+                    'client_name' => $photo->portfolio->client_name ?? null,
+                    'date' => $photo->portfolio->date ?? null,
+                ];
+            })->sortBy('client_name')->values();
+
+            return response()->json([
+                'data' => $formatted,
+            ]);
+        } catch (\Exception $e) {
+            return response()->json([
+                'error' => 'Something went wrong',
+                'message' => $e->getMessage(),
+            ], 500);
+        }
+    }
+
+    public function showPortfolioforIndex($id)
+    {
+        try {
+            $photo = Photo::with('portfolio')->findOrFail($id);
+
+            $formatted = [
+                'id' => $photo->id,
+                'photo_path' => $photo->photo_path,
+                'caption' => $photo->caption,
+                'title' => $photo->portfolio->title ?? null,
+                'description' => $photo->portfolio->description ?? null,
+                'client_name' => $photo->portfolio->client_name ?? null,
+                'date' => $photo->portfolio->date ?? null,
+            ];
+
+            return response()->json([
+                'data' => $formatted,
+            ]);
+        } catch (\Exception $e) {
+            return response()->json([
+                'error' => 'Photo not found or something went wrong',
+                'message' => $e->getMessage(),
+            ], 500);
+        }
+    }
+
 }

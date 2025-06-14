@@ -15,23 +15,6 @@ class PortofolioController extends Controller
     public function index()
     {
         $portfolios = Portfolio::with('photos')->paginate(10);
-
-        $ip = request()->ip();
-
-        foreach ($portfolios as $portfolio) {
-            $alreadyVisited = PortfolioVisitor::where('portfolio_id', $portfolio->id)
-                ->where('visitor_ip', $ip)
-                ->exists();
-
-            if (!$alreadyVisited) {
-                PortfolioVisitor::create([
-                    'portfolio_id' => $portfolio->id,
-                    'visitor_ip' => $ip,
-                ]);
-                $portfolio->increment('views');
-            }
-        }
-
         return $portfolios;
     }
 
@@ -106,17 +89,36 @@ class PortofolioController extends Controller
 
     public function getPortfolioforIndex()
     {
-         try {
+        try {
+            $ip = request()->ip();
+
+            // Cek apakah IP ini sudah pernah akses endpoint ini
+            $alreadyVisited = PortfolioVisitor::where('visitor_ip', $ip)->exists();
+
+            if (!$alreadyVisited) {
+                try {
+                    PortfolioVisitor::create([
+                        'visitor_ip' => $ip,
+                    ]);
+                } catch (\Exception $e) {
+                    Log::error('Visitor logging error (index-level): ' . $e->getMessage());
+                }
+            }
+
             $photos = Photo::with('portfolio')->get();
+
             $formatted = $photos->map(function ($photo) {
+                $portfolio = $photo->portfolio;
+
                 return [
                     'id' => $photo->id,
                     'photo_path' => $photo->photo_path,
                     'caption' => $photo->caption,
-                    'title' => $photo->portfolio->title ?? null,
-                    'description' => $photo->portfolio->description ?? null,
-                    'client_name' => $photo->portfolio->client_name ?? null,
-                    'date' => $photo->portfolio->date ?? null,
+                    'title' => $portfolio->title ?? null,
+                    'description' => $portfolio->description ?? null,
+                    'client_name' => $portfolio->client_name ?? null,
+                    'date' => $portfolio->date ?? null,
+                    'views' => $portfolio->views ?? null,
                 ];
             })->sortBy('client_name')->values();
 
@@ -130,6 +132,7 @@ class PortofolioController extends Controller
             ], 500);
         }
     }
+
 
     public function showPortfolioforIndex($id)
     {

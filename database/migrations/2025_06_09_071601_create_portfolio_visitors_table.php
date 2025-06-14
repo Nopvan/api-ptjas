@@ -13,7 +13,6 @@ return new class extends Migration
     {
         Schema::create('portfolio_visitors', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('portfolio_id')->constrained()->onDelete('cascade');
             $table->string('visitor_ip');
             $table->timestamps();
         });

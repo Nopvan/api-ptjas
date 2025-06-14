@@ -6,6 +6,6 @@ use Illuminate\Database\Eloquent\Model;
 
 class PortfolioVisitor extends Model
 {
-    protected $fillable = ['portfolio_id', 'visitor_ip'];
+    protected $fillable = ['visitor_ip'];
     public $timestamps = true;
 }
